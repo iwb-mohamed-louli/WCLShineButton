@@ -26,72 +26,91 @@
 import UIKit
 
 class WCLShineClickLayer: CALayer {
-    
-    var color: UIColor = UIColor.lightGray
-    
-    var fillColor: UIColor = UIColor(rgb: (255, 102, 102))
-    
-    var image: WCLShineImage = .heart {
-        didSet {
-            if image.isDefaultAndSelect() {
-                mask     = nil
-                contents = image.getImages().first?.cgImage
-            }else {
-                maskLayer.contents = image.getImages().first?.cgImage
-                mask = maskLayer
-            }
-        }
-    }
-    
-    var animDuration: Double = 0.5
-    
-    var clicked: Bool = false {
-        didSet {
-            if image.isDefaultAndSelect() {
-                backgroundColor = UIColor.clear.cgColor
-                if clicked {
-                    contents = image.getImages().last?.cgImage
-                }else {
-                    contents = image.getImages().first?.cgImage
-                }
-            }else {
-                if clicked {
-                    backgroundColor = fillColor.cgColor
-                }else {
-                    backgroundColor = color.cgColor
-                }
-            }
-        }
-    }
-    
-    let maskLayer = CALayer()
-    
-    //MARK: Public Methods
-    func startAnim() {
-        let anim = CAKeyframeAnimation(keyPath: "transform.scale")
-        anim.duration  = animDuration
-        anim.values = [0.4, 1, 0.9, 1]
-        anim.calculationMode = kCAAnimationCubic
-        if image.isDefaultAndSelect() {
-            add(anim, forKey: "scale")
-        }else {
-            maskLayer.add(anim, forKey: "scale")
-        }
-    }
-    
-    //MARK: Override
-    override func layoutSublayers() {
-        if image.isDefaultAndSelect() {
-            backgroundColor = UIColor.clear.cgColor
-        }else {
-            maskLayer.frame = bounds
-            maskLayer.contents = image.getImages().first?.cgImage
-            mask = maskLayer
-            if clicked {
-                backgroundColor = fillColor.cgColor
-            }else {
-                backgroundColor = color.cgColor
-            }
-        }
-    }
+
+	var color: UIColor = UIColor.lightGray
+
+	var fillColor: UIColor = UIColor(rgb: (255, 102, 102))
+
+	var image: WCLShineImage = .heart {
+		didSet {
+			if image.isDefaultAndSelect() {
+				mask     = nil
+				if clicked {
+					contents = image.getImages().last?.cgImage
+				}else {
+					contents = image.getImages().first?.cgImage
+				}
+			}else {
+				maskLayer.contents = image.getImages().first?.cgImage
+				mask = maskLayer
+			}
+		}
+	}
+
+	var intrinsicContentSize: CGSize {
+		switch image {
+		case let .custom(image):
+			return image.size
+		case let .defaultAndSelect(defaultImage, selectedImage):
+			if clicked {
+				return selectedImage.size
+			} else {
+				return defaultImage.size
+			}
+		default:
+			return CGSize(width: 60, height: 60)
+		}
+	}
+
+	var animDuration: Double = 0.5
+
+	var clicked: Bool = false {
+		didSet {
+			if image.isDefaultAndSelect() {
+				backgroundColor = UIColor.clear.cgColor
+				if clicked {
+					contents = image.getImages().last?.cgImage
+				}else {
+					contents = image.getImages().first?.cgImage
+				}
+			}else {
+				if clicked {
+					backgroundColor = fillColor.cgColor
+				}else {
+					backgroundColor = color.cgColor
+				}
+			}
+		}
+	}
+
+	let maskLayer = CALayer()
+
+	//MARK: Public Methods
+	func startAnim() {
+		let anim = CAKeyframeAnimation(keyPath: "transform.scale")
+		anim.duration  = animDuration
+		anim.values = [0.4, 1, 0.9, 1]
+		anim.calculationMode = kCAAnimationCubic
+		if image.isDefaultAndSelect() {
+			add(anim, forKey: "scale")
+		}else {
+			maskLayer.add(anim, forKey: "scale")
+		}
+	}
+
+	//MARK: Override
+	override func layoutSublayers() {
+		if image.isDefaultAndSelect() {
+			backgroundColor = UIColor.clear.cgColor
+		}else {
+			maskLayer.frame = bounds
+			maskLayer.contents = image.getImages().first?.cgImage
+			mask = maskLayer
+			if clicked {
+				backgroundColor = fillColor.cgColor
+			}else {
+				backgroundColor = color.cgColor
+			}
+		}
+	}
 }
