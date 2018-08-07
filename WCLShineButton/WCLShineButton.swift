@@ -123,6 +123,11 @@ open class WCLShineButton: UIControl {
 		clickLayer.opacity = 0.3
 	}
 
+	open override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+		super.touchesCancelled(touches, with: event)
+		clickLayer.opacity = 1
+	}
+
 	//MARK: Override
 	open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
 		super.touchesEnded(touches, with: event)
