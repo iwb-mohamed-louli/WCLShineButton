@@ -52,7 +52,19 @@ open class WCLShineButton: UIControl {
 	}
 
 	open override var intrinsicContentSize: CGSize {
-		return clickLayer.intrinsicContentSize
+		let size = clickLayer.intrinsicContentSize
+
+		// When `invalidateIntrinsicContentSize` is called
+		// UIKit calls `intrinsicContentSize` and changes size of `WCLShineButton`
+		// But this is not the case for its sublayers
+		if clickLayer.frame.size != size {
+			clickLayer.frame.size = size
+		}
+		if shineLayer.frame.size != size {
+			shineLayer.frame.size = size
+		}
+
+		return size
 	}
 
 	/// button的图片
